@@ -64,8 +64,8 @@ var parseSpace = function parseSpace(str) {
 
 var parser = function parser(str) {
   var arr = parseSpace(removeParenthesis(str));
-  arr.forEach(function (element) {
-    return parseInt(element);
+  arr.map(function (element) {
+    return parseInt(element, 10);
   });
   return arr;
 };
@@ -83,17 +83,47 @@ var makearr = function makearr(html) {
     ulList[i] = {
       시도: $(this).find('th:nth-child(1)').text(),
       지역구분: $(this).find('th:nth-child(2)').text(),
-      민간공고대수: parser($(this).find('td:nth-child(5)').text()),
-      접수대수: parser($(this).find('td:nth-child(6)').text()),
-      출고대수: parser($(this).find('td:nth-child(7)').text()),
-      출고잔여대수: parser($(this).find('td:nth-child(8)').text())
+      민간공고대수: parser($(this).find('td:nth-child(5)').text()).map(function (x) {
+        return +x;
+      }),
+      접수대수: parser($(this).find('td:nth-child(6)').text()).map(function (x) {
+        return +x;
+      }),
+      출고대수: parser($(this).find('td:nth-child(7)').text()).map(function (x) {
+        return +x;
+      }),
+      출고잔여대수: parser($(this).find('td:nth-child(8)').text()).map(function (x) {
+        return +x;
+      })
     };
   });
   ulList.forEach(function (elem) {
     elem.접수대수[0] = parseInt(elem.접수대수[1]) + parseInt(elem.접수대수[2]) + (parseInt(elem.접수대수[3]) + parseInt(elem.접수대수[4]));
     var 접수잔여대수 = [elem.민간공고대수[0] - elem.접수대수[0], elem.민간공고대수[1] - elem.접수대수[1], elem.민간공고대수[2] - elem.접수대수[2], elem.민간공고대수[3] - elem.접수대수[3], elem.민간공고대수[4] - elem.접수대수[4]];
     elem.접수잔여대수 = [].concat(접수잔여대수);
-  }); // fs.writeFile('./phillips/src/data.json',JSON.stringify(ulJson,null,4) , 'utf8', ()=>{});
+  });
+  var sum = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]];
+
+  for (var i = 0; i < ulList.length; i++) {
+    for (var j = 0; j < 5; j++) {
+      sum[0][j] += ulList[i].민간공고대수[j];
+      sum[1][j] += ulList[i].접수대수[j];
+      sum[2][j] += ulList[i].출고대수[j];
+      sum[3][j] += ulList[i].출고잔여대수[j];
+      sum[4][j] += ulList[i].접수잔여대수[j];
+    }
+  }
+
+  var last_data = {
+    시도: "전국",
+    지역구분: "전국"
+  };
+  last_data.민간공고대수 = sum[0];
+  last_data.접수대수 = sum[1];
+  last_data.출고대수 = sum[2];
+  last_data.출고잔여대수 = sum[3];
+  last_data.접수잔여대수 = sum[4];
+  ulList.push(last_data); // fs.writeFile('./phillips/src/data.json',JSON.stringify(ulJson,null,4) , 'utf8', ()=>{});
 
   return ulList;
 }; // getHtml().then((html) => {makearr(html);} );

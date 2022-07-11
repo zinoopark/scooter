@@ -6,7 +6,7 @@ var xlsx = _interopRequireWildcard(require("xlsx"));
 
 var _path = _interopRequireDefault(require("path"));
 
-var _makearr = require("./makearr.js");
+var _makearr = require("./_makearr.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -28,10 +28,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 var today = new Date();
 var year = today.getFullYear();
-var month = today.getMonth();
-var day = today.getDay();
-month = month > 9 ? month : '0' + month;
-day = day > 9 ? day : '0' + day;
+var month = today.getMonth() + 1;
+var day = today.getDate();
+var hour = today.getHours();
+var minute = today.getMinutes();
+month = month > 9 ? month : "0".concat(month);
+day = day > 9 ? day : "0".concat(day);
+hour = hour > 9 ? hour : "0".concat(hour);
+minute = minute > 9 ? minute : "0".concat(minute);
 var json = (0, _makearr.getHtml)().then(function (html) {
   return (0, _makearr.makearr)(html);
 }).then(function (res) {
@@ -52,7 +56,7 @@ var json = (0, _makearr.getHtml)().then(function (html) {
     });
   });
   xlsx.utils.book_append_sheet(workbook, worksheet, 'sheet1');
-  xlsx.writeFile(workbook, _path["default"].join(__dirname, "".concat(year, "-").concat(month, "-").concat(day, "\uC794\uC5EC\uB300\uC218\uD604\uD669.xlsx")));
+  xlsx.writeFile(workbook, _path["default"].join(__dirname, "\uC794\uC5EC\uB300\uC218\uD604\uD669_".concat(year).concat(month).concat(day, "_").concat(hour, "\uC2DC").concat(minute, "\uBD84.xlsx")));
 }); // const arrayData = [['kim', 23], ['park', 24]];
 // const jsonData = [
 //   {name: 'kim', age: 23},
